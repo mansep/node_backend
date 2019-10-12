@@ -3,7 +3,7 @@ import exceptions from '../../exceptions'
 import models from '../../models'
 import validator from 'validator'
 import bcrypt from 'bcrypt'
-import constant from '../../utils/contants'
+import constant from '../../utils/constants'
 
 const router = Router()
 
@@ -11,20 +11,19 @@ router.post('/', async (req, res) => {
     try {
         const newUser = new models.User(req.body)
 
+        newUser.username = newUser.username.toLowerCase()
+        newUser.email = newUser.email.toLowerCase()
+
         if (!validator.isEmail(newUser.email)) {
             return exceptions.BadRequest(res, 'Email invalido')
         }
-        if (newUser.username.indexOf(' ') > 0) {
+
+        if (!validator.isAlphanumeric(newUser.username, 'en-US')) {
             return exceptions.BadRequest(
                 res,
-                'Usuario no puede contener espacios'
+                'Usuario no puede contener caracteres especiales'
             )
         }
-        newUser.username = newUser.username.toLowerCase()
-        newUser.email = newUser.email.toLowerCase()
-        newUser.password = bcrypt.hashSync(newUser.password, 11)
-        newUser.status = constant.STATUS_UNCONFIRMED
-        newUser.role = constant.ROLE_USER
 
         let user = await models.User.find({ username: newUser.username })
         if (user.length > 0) {
@@ -35,6 +34,10 @@ router.post('/', async (req, res) => {
         if (user.length > 0) {
             return exceptions.BadRequest(res, 'Email está en uso')
         }
+
+        newUser.password = bcrypt.hashSync(newUser.password, 11)
+        newUser.status = constant.STATUS_UNCONFIRMED
+        newUser.role = constant.ROLE_USER
 
         user = await newUser.save()
         res.status(201).json(user)

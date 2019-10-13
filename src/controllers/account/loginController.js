@@ -30,7 +30,10 @@ router.post('/', async (req, res) => {
                     ),
                 })
             } else {
-                return exceptions.Unauthorized(res, 'Usuario o password invalido')
+                return exceptions.Unauthorized(
+                    res,
+                    'Usuario o password invalido'
+                )
             }
         } else {
             return exceptions.Unauthorized(res, 'Usuario o password invalido')

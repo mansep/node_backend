@@ -41,8 +41,8 @@ router.post('/', async (req, res) => {
 
         await newUser.save()
 
-        return res.status(201).json({ 
-            status: 201, 
+        return res.status(201).json({
+            status: 201,
             message: 'Usuario creado con exito',
         })
     } catch (err) {

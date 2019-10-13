@@ -79,8 +79,8 @@ router.put('/password', async (req, res) => {
 
         currentUser.password = bcrypt.hashSync(newPassword, 11)
         await currentUser.save()
-        res.status(200).json({ 
-            status: 200, 
+        res.status(200).json({
+            status: 200,
             message: 'Password cambiado con exito',
         })
     } catch (err) {

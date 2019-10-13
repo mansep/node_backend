@@ -39,8 +39,12 @@ router.post('/', async (req, res) => {
         newUser.status = constant.STATUS_UNCONFIRMED
         newUser.role = constant.ROLE_USER
 
-        user = await newUser.save()
-        res.status(201).json(user)
+        await newUser.save()
+
+        return res.status(201).json({ 
+            status: 201, 
+            message: 'Usuario creado con exito',
+        })
     } catch (err) {
         console.error(err)
         return exceptions.InternalError(res, err.message)

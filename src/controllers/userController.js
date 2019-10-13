@@ -5,6 +5,7 @@ import models from '../models'
 import exceptions from '../exceptions'
 import validator from 'validator'
 import constants from '../utils/constants'
+import bcrypt from 'bcrypt'
 
 const router = Router()
 
@@ -60,6 +61,28 @@ router.put('/', async (req, res) => {
 
         currentUser = await currentUser.save()
         res.status(201).json(currentUser)
+    } catch (err) {
+        console.error(err)
+        return exceptions.InternalError(res, err.message)
+    }
+})
+
+router.put('/password', async (req, res) => {
+    try {
+        const password = req.body.password
+        const newPassword = req.body.newpassword
+        let currentUser = await models.User.findById(req.user.id)
+
+        if (!bcrypt.compareSync(password, currentUser.password)) {
+            return exceptions.Unauthorized(res, 'Password invalido')
+        }
+
+        currentUser.password = bcrypt.hashSync(newPassword, 11)
+        await currentUser.save()
+        res.status(200).json({ 
+            status: 200, 
+            message: 'Password cambiado con exito',
+        })
     } catch (err) {
         console.error(err)
         return exceptions.InternalError(res, err.message)

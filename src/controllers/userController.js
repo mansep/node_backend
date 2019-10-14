@@ -1,28 +1,18 @@
-import mongoose from 'mongoose'
 import { Router } from 'express'
 
 import models from '../models'
 import exceptions from '../exceptions'
-import validator from 'validator'
 import constants from '../utils/constants'
 import bcrypt from 'bcrypt'
+import validator from 'validator'
+import uploadMulter from '../utils/uploadMulter'
 
 const router = Router()
 
 router.get('/', async (req, res) => {
-    const users = await models.User.find()
+    const userId = req.user.id
+    const users = await models.User.findById(userId)
     return res.send(users)
-})
-
-router.get('/:userId', async (req, res) => {
-    const userId = req.params.userId
-
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-        return res.status(500).send({ message: 'Parametro invalido' })
-    }
-
-    const user = await models.User.findById(userId)
-    return res.send(user)
 })
 
 router.put('/', async (req, res) => {
@@ -82,6 +72,22 @@ router.put('/password', async (req, res) => {
         res.status(200).json({
             status: 200,
             message: 'Password cambiado con exito',
+        })
+    } catch (err) {
+        console.error(err)
+        return exceptions.InternalError(res, err.message)
+    }
+})
+
+router.put('/photo', uploadMulter.single('foto'), async (req, res) => {
+    try {
+        const userId = req.user.id
+        let currentUser = await models.User.findById(userId)
+        currentUser.photo = req.file.location
+        await currentUser.save()
+        res.status(200).json({
+            status: 200,
+            message: 'Foto cambiada con exito',
         })
     } catch (err) {
         console.error(err)

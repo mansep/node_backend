@@ -3,7 +3,7 @@ import { Router } from 'express'
 
 export function secure() {
     const router = Router()
-    router.use('/users', controllers.User)
+    router.use('/user', controllers.User)
     return router
 }
 

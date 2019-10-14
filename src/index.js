@@ -29,9 +29,18 @@ app.use(function(req, res) {
 })
 // eslint-disable-next-line no-unused-vars
 app.use(function(err, req, res, next) {
-    res.status(err.status).json({
-        status: err.status,
-        message: err.message,
+    console.error(err);
+    let status = 500
+    let message = 'Error interno'
+    if (err.status !== undefined) {
+        status = err.status
+    }
+    if (err.message !== undefined) {
+        message = err.message
+    }
+    res.status(status).json({
+        status: status,
+        message: message,
     })
 })
 mongoose

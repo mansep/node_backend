@@ -16,15 +16,16 @@ const uploadMulter = multer({
         bucket: process.env.AWS_S3_BUCKET,
         acl: 'public-read',
         contentType: multerS3.AUTO_CONTENT_TYPE,
-        metadata: function (req, file, cb) {
-            cb(null, { fieldName: file.fieldname });
+        metadata: function(req, file, cb) {
+            cb(null, { fieldName: file.fieldname })
         },
-        key: function (req, file, cb) {
-            cb(null, file.originalname)
+        key: function(req, file, cb) {
+            // forzamos nombre por id para evitar tener más de una imagen por usuario
+            cb(null, 'profile/'.concat(req.user.id.concat('.jpg')))
         },
     }),
     limits: { fileSize: 1024 * 1024 * 5 }, // 5 MB
-    fileFilter: function (req, file, cb) {
+    fileFilter: function(req, file, cb) {
         console.log(file)
         const filetypes = /jpeg|jpg|png|gif/
         const mimetype = filetypes.test(file.mimetype)

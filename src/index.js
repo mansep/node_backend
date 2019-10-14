@@ -29,7 +29,7 @@ app.use(function(req, res) {
 })
 // eslint-disable-next-line no-unused-vars
 app.use(function(err, req, res, next) {
-    console.error(err);
+    console.error(err)
     let status = 500
     let message = 'Error interno'
     if (err.status !== undefined) {

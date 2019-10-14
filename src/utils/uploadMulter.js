@@ -33,7 +33,7 @@ const uploadMulter = multer({
         if (mimetype) {
             return cb(null, true)
         } else {
-            cb('Solo puede cargar imagenes')
+            cb({ status: 400, message: 'Solo puede cargar imagenes' })
         }
     },
 })
